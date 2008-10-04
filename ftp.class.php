@@ -22,6 +22,17 @@ class Ftp
 	const FINISHED = FTP_FINISHED;
 	const MOREDATA = FTP_MOREDATA;
 
+	private static $aliases = array(
+		'sslconnect' => 'ssl_connect',
+		'getoption' => 'get_option',
+		'setoption' => 'set_option',
+		'nbcontinue' => 'nb_continue',
+		'nbfget' => 'nb_fget',
+		'nbfput' => 'nb_fput',
+		'nbget' => 'nb_get',
+		'nbput' => 'nb_put',
+	);
+
 	/** @var resource */
 	private $resource;
 
@@ -35,15 +46,18 @@ class Ftp
 	 */
 	public function __call($name, $args)
 	{
-		if (!function_exists('ftp_' .  $name)) {
-			throw new FtpException("Call to undefined method Ftp::$name().");
+		$func = strtolower($name);
+		$func = 'ftp_' . (isset(self::$aliases[$func]) ? self::$aliases[$func] : $func);
+
+		if (!function_exists($func)) {
+			throw new Exception("Call to undefined method Ftp::$name().");
 		}
 
 		$this->errorMsg = NULL;
 		set_error_handler(array($this, '_errorHandler'));
 
-		if (strcasecmp($name, 'connect') === 0 || strcasecmp($name, 'ssl_connect') === 0) {
-			$this->resource = call_user_func_array('ftp_' . $name, $args);
+		if ($func === 'ftp_connect' || $func === 'ftp_ssl_connect') {
+			$this->resource = call_user_func_array($func, $args);
 			$res = NULL;
 
 		} elseif (!is_resource($this->resource)) {
@@ -51,7 +65,7 @@ class Ftp
 
 		} else {
 			array_unshift($args, $this->resource);
-			$res = call_user_func_array('ftp_' . $name, $args);
+			$res = call_user_func_array($func, $args);
 		}
 
 		restore_error_handler();
@@ -86,9 +100,10 @@ class Ftp
 	 * @param  string
 	 * @return bool
 	 */
-	public function file_exists($file)
+	public function fileExists($file)
 	{
-		return in_array($file, $this->nlist('.'), TRUE);
+		$tmp = $this->nlist('.');
+		return is_array($tmp) && in_array($file, $tmp, TRUE);
 	}
 
 
@@ -98,7 +113,7 @@ class Ftp
 	 * @param  string
 	 * @return bool
 	 */
-	public function is_dir($dir)
+	public function isDir($dir)
 	{
 		$current = $this->pwd();
 		try {
@@ -116,7 +131,7 @@ class Ftp
 	 * @param  string
 	 * @return void
 	 */
-	public function mkdir_r($dir)
+	public function mkDirRecursive($dir)
 	{
 		$parts = explode('/', $dir);
 		$path = '';
@@ -125,7 +140,7 @@ class Ftp
 			try {
 				if ($path !== '') $this->mkdir($path);
 			} catch (FtpException $e) {
-				if (!$this->is_dir($path)) {
+				if (!$this->isDir($path)) {
 					throw new FtpException("Cannot create directory '$path'.");
 				}
 			}

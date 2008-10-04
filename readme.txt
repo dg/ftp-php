@@ -19,30 +19,30 @@ Requirements
 Usage
 -----
 
-Opens an FTP connection to the specified host: 
+Opens an FTP connection to the specified host:
 
 	$ftp = new Ftp;
 	$ftp->connect($host);
 
-Login with username and password 
+Login with username and password
 
-	$ftp->login($username, $password); 
+	$ftp->login($username, $password);
 
-Upload the file 
+Upload the file
 
 	$ftp->put($destination_file, $source_file, FTP_BINARY);
 
-Close the FTP stream 
+Close the FTP stream
 
-	$ftp->close(); 
+	$ftp->close();
 	// or simply unset($ftp);
 
-Ftp throws exception if operation failed. So you can simply do following: 
+Ftp throws exception if operation failed. So you can simply do following:
 
 	try {
 		$ftp = new Ftp;
 		$ftp->connect($host);
-		$ftp->login($username, $password); 
+		$ftp->login($username, $password);
 		$ftp->put($destination_file, $source_file, FTP_BINARY);
 
 	} catch (FtpException $e) {
@@ -56,4 +56,3 @@ readme.txt        - This file.
 license.txt       - The license for this software (New BSD License).
 ftp.class.php     - The core Ftp class source.
 example.php       - Example.
-

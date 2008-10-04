@@ -12,15 +12,15 @@ try {
 	// Login with username and password
 	$ftp->login('anonymous', 'example@example.com');
 
-	// Download file 'README' to local file 'temp'
-	$ftp->get('temp', 'README', Ftp::ASCII);
+	// Download file 'README' to local temporary file
+	$temp = tmpfile();
+	$ftp->fget($temp, 'README', Ftp::ASCII);
 
 	// echo file
 	echo '<pre>';
-	readfile('temp');
-	unlink('temp');
+	fseek($temp, 0);
+	fpassthru($temp);
 
 } catch (FtpException $e) {
 	echo 'Error: ', $e->getMessage();
 }
-
