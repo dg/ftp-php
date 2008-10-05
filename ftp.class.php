@@ -36,7 +36,10 @@ class Ftp
 	/** @var resource */
 	private $resource;
 
-   	/** @var string */
+	/** @var array */
+	private $state;
+
+	/** @var string */
 	private $errorMsg;
 
 
@@ -46,8 +49,8 @@ class Ftp
 	 */
 	public function __call($name, $args)
 	{
-		$func = strtolower($name);
-		$func = 'ftp_' . (isset(self::$aliases[$func]) ? self::$aliases[$func] : $func);
+		$name = strtolower($name);
+		$func = 'ftp_' . (isset(self::$aliases[$name]) ? self::$aliases[$name] : $name);
 
 		if (!function_exists($func)) {
 			throw new Exception("Call to undefined method Ftp::$name().");
@@ -57,6 +60,7 @@ class Ftp
 		set_error_handler(array($this, '_errorHandler'));
 
 		if ($func === 'ftp_connect' || $func === 'ftp_ssl_connect') {
+			$this->state = array($name => $args);
 			$this->resource = call_user_func_array($func, $args);
 			$res = NULL;
 
@@ -64,8 +68,16 @@ class Ftp
 			throw new FtpException("Not connected to FTP server. Call connect() or ssl_connect() first.");
 
 		} else {
+			if ($func === 'ftp_login') {
+				$this->state[$name] = $args;
+			}
+
 			array_unshift($args, $this->resource);
 			$res = call_user_func_array($func, $args);
+
+			if ($func === 'ftp_chdir') {
+				$this->state[$name] = array(ftp_pwd($this->resource));
+			}
 		}
 
 		restore_error_handler();
@@ -91,6 +103,20 @@ class Ftp
 	public function _errorHandler($code, $message)
 	{
 		$this->errorMsg = $message;
+	}
+
+
+
+	/**
+	 * Reconnects to FTP server.
+	 * @return void
+	 */
+	public function reconnect()
+	{
+		@ftp_close($this->resource);
+		foreach ($this->state as $name => $args) {
+			call_user_func_array(array($this, $name), $args);
+		}
 	}
 
 
