@@ -50,7 +50,9 @@ class Ftp
 	public function __call($name, $args)
 	{
 		$name = strtolower($name);
-		$func = 'ftp_' . (isset(self::$aliases[$name]) ? self::$aliases[$name] : $name);
+		$silent = strncmp($name, 'try', 3) === 0;
+		$func = $silent ? substr($name, 3) : $name;
+		$func = 'ftp_' . (isset(self::$aliases[$func]) ? self::$aliases[$func] : $func);
 
 		if (!function_exists($func)) {
 			throw new Exception("Call to undefined method Ftp::$name().");
@@ -65,30 +67,32 @@ class Ftp
 			$res = NULL;
 
 		} elseif (!is_resource($this->resource)) {
+			restore_error_handler();
 			throw new FtpException("Not connected to FTP server. Call connect() or ssl_connect() first.");
 
 		} else {
 			if ($func === 'ftp_login') {
-				$this->state[$name] = $args;
+				$this->state['login'] = $args;
 			}
 
 			array_unshift($args, $this->resource);
 			$res = call_user_func_array($func, $args);
 
-			if ($func === 'ftp_chdir') {
-				$this->state[$name] = array(ftp_pwd($this->resource));
+			if ($func === 'ftp_chdir' || $func === 'ftp_cdup') {
+				$this->state['chdir'] = array(ftp_pwd($this->resource));
 			}
 		}
 
 		restore_error_handler();
-		if ($this->errorMsg !== NULL) {
+		if (!$silent && $this->errorMsg !== NULL) {
 			if (ini_get('html_errors')) {
 				$this->errorMsg = html_entity_decode(strip_tags($this->errorMsg));
 			}
-			$a = strpos($this->errorMsg, ': ');
-			if ($a !== FALSE) {
+
+			if (($a = strpos($this->errorMsg, ': ')) !== FALSE) {
 				$this->errorMsg = substr($this->errorMsg, $a + 2);
 			}
+
 			throw new FtpException($this->errorMsg);
 		}
 
@@ -128,8 +132,7 @@ class Ftp
 	 */
 	public function fileExists($file)
 	{
-		$tmp = $this->nlist('.');
-		return is_array($tmp) && in_array($file, $tmp, TRUE);
+		return is_array($this->nlist($file));
 	}
 
 
