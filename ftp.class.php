@@ -11,6 +11,7 @@
  */
 class Ftp
 {
+	/**#@+ FTP constant alias */
 	const ASCII = FTP_ASCII;
 	const TEXT = FTP_TEXT;
 	const BINARY = FTP_BINARY;
@@ -21,6 +22,7 @@ class Ftp
 	const FAILED = FTP_FAILED;
 	const FINISHED = FTP_FINISHED;
 	const MOREDATA = FTP_MOREDATA;
+	/**#@-*/
 
 	private static $aliases = array(
 		'sslconnect' => 'ssl_connect',
@@ -46,6 +48,11 @@ class Ftp
 
 	/**
 	 * Magic method (do not call directly).
+	 * @param  string  method name
+	 * @param  array   arguments
+	 * @return mixed
+	 * @throws Exception
+	 * @throws FtpException
 	 */
 	public function __call($name, $args)
 	{
@@ -71,8 +78,8 @@ class Ftp
 			throw new FtpException("Not connected to FTP server. Call connect() or ssl_connect() first.");
 
 		} else {
-			if ($func === 'ftp_login') {
-				$this->state['login'] = $args;
+			if ($func === 'ftp_login' || $func === 'ftp_pasv') {
+				$this->state[$name] = $args;
 			}
 
 			array_unshift($args, $this->resource);
@@ -117,7 +124,7 @@ class Ftp
 	 */
 	public function reconnect()
 	{
-		@ftp_close($this->resource);
+		@ftp_close($this->resource); // intentionally @
 		foreach ($this->state as $name => $args) {
 			call_user_func_array(array($this, $name), $args);
 		}
@@ -156,7 +163,7 @@ class Ftp
 
 
 	/**
-	 * Recursive creates directory.
+	 * Recursive creates directories.
 	 * @param  string
 	 * @return void
 	 */

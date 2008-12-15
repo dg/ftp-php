@@ -49,6 +49,12 @@ Ftp throws exception if operation failed. So you can simply do following:
 		echo 'Error: ', $e->getMessage();
 	}
 
+On the other hand, if you'd like the possible exception quietly catch, call methods with the prefix 'try':
+
+	$ftp->tryDelete($destination_file);
+
+When the connection is accidentally interrupted, you can re-establish it using method $ftp->reconnect().
+
 
 Files
 -----
