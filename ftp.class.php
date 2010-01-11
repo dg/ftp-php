@@ -47,6 +47,27 @@ class Ftp
 
 
 	/**
+	 * @param  string  URL ftp://...
+	 */
+	public function __construct($url = NULL)
+	{
+		if (!extension_loaded('ftp')) {
+			throw new /*\*/Exception("PHP extension FTP is not loaded.");
+		}
+		if ($url) {
+			$parts = parse_url($url);
+			$this->connect($parts['host'], empty($parts['port']) ? NULL : (int) $parts['port']);
+			$this->login($parts['user'], $parts['pass']);
+			$this->pasv(TRUE);
+			if (isset($parts['path'])) {
+				$this->chdir($parts['path']);
+			}
+		}
+	}
+
+
+
+	/**
 	 * Magic method (do not call directly).
 	 * @param  string  method name
 	 * @param  array   arguments
@@ -181,6 +202,25 @@ class Ftp
 				}
 			}
 			$path .= '/';
+		}
+	}
+
+
+
+	/**
+	 * Recursive deletes path.
+	 * @param  string
+	 * @return void
+	 */
+	public function deleteRecursive($path)
+	{
+		if (!$this->tryDelete($path)) {
+			foreach ((array) $this->nlist($path) as $file) {
+				if ($file !== '.' && $file !== '..') {
+					$this->deleteRecursive(strpos($file, '/') === FALSE ? "$path/$file" : $file);
+				}
+			}
+			$this->rmdir($path);
 		}
 	}
 
