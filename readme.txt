@@ -7,7 +7,7 @@ Introduction
 FTP for PHP is a very small and easy-to-use library for accessing FTP servers.
 
 
-Project at GoogleCode: http://ftp-php.googlecode.com
+Project at GitHub: https://github.com/dg/ftp-php
 My PHP blog: http://phpfashion.com
 
 
