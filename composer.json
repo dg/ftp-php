@@ -8,7 +8,11 @@
 		{
 			"name": "David Grudl",
 			"homepage": "http://davidgrudl.com"
-		}
+		},
+        {
+            "name": "Igor Malinovskiy",
+            "homepage": "http://glide.name"
+        },
 	],
 	"autoload": {
 		"classmap": ["ftp.class.php"]

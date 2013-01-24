@@ -58,7 +58,8 @@ When the connection is accidentally interrupted, you can re-establish it using m
 
 Files
 -----
-readme.txt        - This file.
-license.txt       - The license for this software (New BSD License).
-ftp.class.php     - The core Ftp class source.
-example.php       - Example.
+readme.txt          - This file.
+license.txt         - The license for this software (New BSD License).
+ftp.class.php       - The core Ftp class source.
+example.php         - Example.
+downloadExample.php - Example with downloading remote folder
