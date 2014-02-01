@@ -160,7 +160,7 @@ class Ftp
 	 */
 	public function fileExists($file)
 	{
-		return is_array($this->nlist($file));
+		return (bool) $this->nlist($file);
 	}
 
 
