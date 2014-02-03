@@ -224,6 +224,88 @@ class Ftp
 		}
 	}
 
+    /**
+     * @param $path
+     *
+     * @return array
+     */
+    public function listDetailed($path)
+    {
+        if (is_array($children = $this->rawlist($path))) {
+            $items = array();
+
+            foreach ($children as $child) {
+                $chunks = preg_split("/\s+/", $child);
+
+                list(
+                    $item['rights'],
+                    $item['number'],
+                    $item['user'],
+                    $item['group'],
+                    $item['size'],
+                    $item['month'],
+                    $item['day'],
+                    $item['time']
+                    ) = $chunks;
+
+                $item['type'] = $chunks[0]{0} === 'd' ? 'directory' : 'file';
+                array_splice($chunks, 0, 8);
+                $items[implode(" ", $chunks)] = $item;
+            }
+
+            return $items;
+        }
+
+        return array();
+    }
+
+    /**
+     * @param $localPath
+     * @param $remotePath
+     * @param $excludeFilesPattern
+     */
+    public function downloadDirContent($localPath, $remotePath, $excludeFilesPattern = null)
+    {
+        $dirContent = $this->listDetailed($remotePath);
+
+        foreach ($dirContent as $itemName => $itemInfo) {
+
+            $localFilePath = $localPath
+                . DIRECTORY_SEPARATOR
+                . $itemName;
+
+            $remoteFilePath = $remotePath
+                . '/'
+                . $itemName;
+
+            /**
+             * Skip excluded files
+             */
+            if (null != $excludeFilesPattern
+                && preg_match($excludeFilesPattern, $itemName) == 1) {
+
+                if ($itemInfo['type'] == 'directory') {
+                    mkdir($localFilePath);
+                }
+
+                continue;
+            }
+
+            if ($itemInfo['type'] == 'directory') { //is DIR
+                mkdir($localFilePath);
+                $this->downloadDirContent($localFilePath, $remoteFilePath, $excludeFilesPattern);
+            } else { // is File
+                try {
+                    echo 'Start get file ' . $itemName  . PHP_EOL;
+                    $this->get($localFilePath, $remoteFilePath, FTP_BINARY);
+                    echo 'Finished ' . $itemName  . PHP_EOL;
+                } catch (FtpException $e) {
+                    echo $e->getMessage() . PHP_EOL;
+                }
+            }
+        }
+    }
+
 }
 
 
