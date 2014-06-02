@@ -1,6 +1,6 @@
 <?php
 
-require_once 'ftp.class.php';
+require_once 'src/Ftp.php';
 
 
 try {

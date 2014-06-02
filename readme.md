@@ -1,19 +1,15 @@
-FTP for PHP (c) David Grudl, 2008 (http://davidgrudl.com)
+FTP for PHP
+===========
 
-
-Introduction
-------------
+[![Downloads this Month](https://img.shields.io/packagist/dm/dg/ftp-php.svg)](https://packagist.org/packages/dg/ftp-php)
 
 FTP for PHP is a very small and easy-to-use library for accessing FTP servers.
 
+It requires PHP 5.0 or newer and is licensed under the New BSD License.
+You can obtain the latest version from our [GitHub repository](http://github.com/dg/ftp-php)
+or install it via Composer:
 
-Project at GitHub: https://github.com/dg/ftp-php
-My PHP blog: http://phpfashion.com
-
-
-Requirements
-------------
-- PHP (version 5 or better)
+	php composer.phar require dg/ftp-php
 
 
 Usage
@@ -56,9 +52,14 @@ On the other hand, if you'd like the possible exception quietly catch, call meth
 When the connection is accidentally interrupted, you can re-establish it using method $ftp->reconnect().
 
 
-Files
+Changelog
+---------
+v1.1 (6/2014)
+- added support for passive mode
+
+v1.0 (8/2012)
+- initial release
+
+
 -----
-readme.txt        - This file.
-license.txt       - The license for this software (New BSD License).
-ftp.class.php     - The core Ftp class source.
-example.php       - Example.
+(c) David Grudl, 2008, 2014 (http://davidgrudl.com)

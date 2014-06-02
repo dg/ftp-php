@@ -1,9 +1,9 @@
 {
 	"name": "dg/ftp-php",
-	"description": "Easy-to-use library for accessing FTP servers.",
+	"description": "Easy-to-use library for accessing FTP servers",
 	"keywords": ["ftp"],
 	"homepage": "https://github.com/dg/ftp-php",
-	"license": ["BSD-3"],
+	"license": ["BSD-3-Clause"],
 	"authors": [
 		{
 			"name": "David Grudl",
@@ -11,6 +11,6 @@
 		}
 	],
 	"autoload": {
-		"classmap": ["ftp.class.php"]
+		"classmap": ["src/"]
 	}
 }
