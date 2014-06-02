@@ -45,26 +45,29 @@ class Ftp
 	private $errorMsg;
 
 
-
 	/**
 	 * @param  string  URL ftp://...
+	 * @param  bool
 	 */
-	public function __construct($url = NULL)
+	public function __construct($url = NULL, $passiveMode = TRUE)
 	{
 		if (!extension_loaded('ftp')) {
-			throw new /*\*/Exception("PHP extension FTP is not loaded.");
+			throw new Exception('PHP extension FTP is not loaded.');
 		}
 		if ($url) {
 			$parts = parse_url($url);
-			$this->connect($parts['host'], empty($parts['port']) ? NULL : (int) $parts['port']);
-			$this->login($parts['user'], $parts['pass']);
-			$this->pasv(TRUE);
+			if (!isset($parts['scheme']) || ($parts['scheme'] !== 'ftp' && $parts['scheme'] !== 'sftp')) {
+				throw new InvalidArgumentException('Invalid URL.');
+			}
+			$func = $parts['scheme'] === 'ftp' ? 'connect' : 'ssl_connect';
+			$this->$func($parts['host'], empty($parts['port']) ? NULL : (int) $parts['port']);
+			$this->login(urldecode($parts['user']), urldecode($parts['pass']));
+			$this->pasv((bool) $passiveMode);
 			if (isset($parts['path'])) {
 				$this->chdir($parts['path']);
 			}
 		}
 	}
-
 
 
 	/**
@@ -128,7 +131,6 @@ class Ftp
 	}
 
 
-
 	/**
 	 * Internal error handler. Do not call directly.
 	 */
@@ -136,7 +138,6 @@ class Ftp
 	{
 		$this->errorMsg = $message;
 	}
-
 
 
 	/**
@@ -152,7 +153,6 @@ class Ftp
 	}
 
 
-
 	/**
 	 * Checks if file or directory exists.
 	 * @param  string
@@ -162,7 +162,6 @@ class Ftp
 	{
 		return (bool) $this->nlist($file);
 	}
-
 
 
 	/**
@@ -180,7 +179,6 @@ class Ftp
 		$this->chdir($current);
 		return empty($e);
 	}
-
 
 
 	/**
@@ -204,7 +202,6 @@ class Ftp
 			$path .= '/';
 		}
 	}
-
 
 
 	/**
