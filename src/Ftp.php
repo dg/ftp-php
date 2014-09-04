@@ -11,219 +11,227 @@
  */
 class Ftp
 {
-	/**#@+ FTP constant alias */
-	const ASCII = FTP_ASCII;
-	const TEXT = FTP_TEXT;
-	const BINARY = FTP_BINARY;
-	const IMAGE = FTP_IMAGE;
-	const TIMEOUT_SEC = FTP_TIMEOUT_SEC;
-	const AUTOSEEK = FTP_AUTOSEEK;
-	const AUTORESUME = FTP_AUTORESUME;
-	const FAILED = FTP_FAILED;
-	const FINISHED = FTP_FINISHED;
-	const MOREDATA = FTP_MOREDATA;
-	/**#@-*/
 
-	private static $aliases = array(
-		'sslconnect' => 'ssl_connect',
-		'getoption' => 'get_option',
-		'setoption' => 'set_option',
-		'nbcontinue' => 'nb_continue',
-		'nbfget' => 'nb_fget',
-		'nbfput' => 'nb_fput',
-		'nbget' => 'nb_get',
-		'nbput' => 'nb_put',
-	);
+    /** #@+ FTP constant alias */
+    const ASCII       = FTP_ASCII;
+    const TEXT        = FTP_TEXT;
+    const BINARY      = FTP_BINARY;
+    const IMAGE       = FTP_IMAGE;
+    const TIMEOUT_SEC = FTP_TIMEOUT_SEC;
+    const AUTOSEEK    = FTP_AUTOSEEK;
+    const AUTORESUME  = FTP_AUTORESUME;
+    const FAILED      = FTP_FAILED;
+    const FINISHED    = FTP_FINISHED;
+    const MOREDATA    = FTP_MOREDATA;
+    /** #@- */
 
-	/** @var resource */
-	private $resource;
+    private static $aliases = array(
+        'sslconnect' => 'ssl_connect',
+        'getoption'  => 'get_option',
+        'setoption'  => 'set_option',
+        'nbcontinue' => 'nb_continue',
+        'nbfget'     => 'nb_fget',
+        'nbfput'     => 'nb_fput',
+        'nbget'      => 'nb_get',
+        'nbput'      => 'nb_put',
+    );
 
-	/** @var array */
-	private $state;
+    /** @var resource */
+    private $resource;
 
-	/** @var string */
-	private $errorMsg;
+    /** @var array */
+    private $state;
 
+    /** @var string */
+    private $errorMsg;
 
-	/**
-	 * @param  string  URL ftp://...
-	 * @param  bool
-	 */
-	public function __construct($url = NULL, $passiveMode = TRUE)
-	{
-		if (!extension_loaded('ftp')) {
-			throw new Exception('PHP extension FTP is not loaded.');
-		}
-		if ($url) {
-			$parts = parse_url($url);
-			if (!isset($parts['scheme']) || ($parts['scheme'] !== 'ftp' && $parts['scheme'] !== 'sftp')) {
-				throw new InvalidArgumentException('Invalid URL.');
-			}
-			$func = $parts['scheme'] === 'ftp' ? 'connect' : 'ssl_connect';
-			$this->$func($parts['host'], empty($parts['port']) ? NULL : (int) $parts['port']);
-			$this->login(urldecode($parts['user']), urldecode($parts['pass']));
-			$this->pasv((bool) $passiveMode);
-			if (isset($parts['path'])) {
-				$this->chdir($parts['path']);
-			}
-		}
-	}
+    /**
+     * @param  string  URL ftp://...
+     * @param  bool
+     */
+    public function __construct($url = null, $passiveMode = true)
+    {
+        if (! extension_loaded('ftp')) {
+            throw new Exception('PHP extension FTP is not loaded.');
+        }
 
+        if (! $url) {
+            return;
+        }
 
-	/**
-	 * Magic method (do not call directly).
-	 * @param  string  method name
-	 * @param  array   arguments
-	 * @return mixed
-	 * @throws Exception
-	 * @throws FtpException
-	 */
-	public function __call($name, $args)
-	{
-		$name = strtolower($name);
-		$silent = strncmp($name, 'try', 3) === 0;
-		$func = $silent ? substr($name, 3) : $name;
-		$func = 'ftp_' . (isset(self::$aliases[$func]) ? self::$aliases[$func] : $func);
+        $parts = parse_url($url);
 
-		if (!function_exists($func)) {
-			throw new Exception("Call to undefined method Ftp::$name().");
-		}
+        if (! isset($parts['scheme'])
+            || ($parts['scheme'] !== 'ftp'
+                && $parts['scheme'] !== 'sftp')
+        ) {
+            throw new InvalidArgumentException('Invalid URL.');
+        }
 
-		$this->errorMsg = NULL;
-		set_error_handler(array($this, '_errorHandler'));
+        $func = $parts['scheme'] === 'ftp' ? 'connect' : 'ssl_connect';
 
-		if ($func === 'ftp_connect' || $func === 'ftp_ssl_connect') {
-			$this->state = array($name => $args);
-			$this->resource = call_user_func_array($func, $args);
-			$res = NULL;
+        $this->$func($parts['host'], empty($parts['port']) ? null : (int) $parts['port']);
 
-		} elseif (!is_resource($this->resource)) {
-			restore_error_handler();
-			throw new FtpException("Not connected to FTP server. Call connect() or ssl_connect() first.");
+        $this->login(urldecode($parts['user']), urldecode($parts['pass']));
 
-		} else {
-			if ($func === 'ftp_login' || $func === 'ftp_pasv') {
-				$this->state[$name] = $args;
-			}
+        $this->pasv((bool) $passiveMode);
 
-			array_unshift($args, $this->resource);
-			$res = call_user_func_array($func, $args);
+        if (isset($parts['path'])) {
+            $this->chdir($parts['path']);
+        }
+    }
 
-			if ($func === 'ftp_chdir' || $func === 'ftp_cdup') {
-				$this->state['chdir'] = array(ftp_pwd($this->resource));
-			}
-		}
+    /**
+     * Magic method (do not call directly).
+     * @param  string  method name
+     * @param  array   arguments
+     * @return mixed
+     * @throws Exception
+     * @throws FtpException
+     */
+    public function __call($name, $args)
+    {
+        $name   = strtolower($name);
+        $silent = strncmp($name, 'try', 3) === 0;
+        $func   = $silent ? substr($name, 3) : $name;
+        $func   = 'ftp_' . (isset(self::$aliases[$func]) ? self::$aliases[$func] : $func);
 
-		restore_error_handler();
-		if (!$silent && $this->errorMsg !== NULL) {
-			if (ini_get('html_errors')) {
-				$this->errorMsg = html_entity_decode(strip_tags($this->errorMsg));
-			}
+        if (! function_exists($func)) {
+            throw new Exception("Call to undefined method Ftp::$name().");
+        }
 
-			if (($a = strpos($this->errorMsg, ': ')) !== FALSE) {
-				$this->errorMsg = substr($this->errorMsg, $a + 2);
-			}
+        $this->errorMsg = null;
+        set_error_handler(array($this, 'errorHandler'));
 
-			throw new FtpException($this->errorMsg);
-		}
+        if ($func === 'ftp_connect' || $func === 'ftp_ssl_connect') {
+            $this->state    = array($name => $args);
+            $this->resource = call_user_func_array($func, $args);
+            $res            = null;
+        } elseif (!is_resource($this->resource)) {
+            restore_error_handler();
+            throw new FtpException("Not connected to FTP server. Call connect() or ssl_connect() first.");
+        } else {
+            if ($func === 'ftp_login' || $func === 'ftp_pasv') {
+                $this->state[$name] = $args;
+            }
 
-		return $res;
-	}
+            array_unshift($args, $this->resource);
+            $res = call_user_func_array($func, $args);
 
+            if ($func === 'ftp_chdir' || $func === 'ftp_cdup') {
+                $this->state['chdir'] = array(ftp_pwd($this->resource));
+            }
+        }
 
-	/**
-	 * Internal error handler. Do not call directly.
-	 */
-	public function _errorHandler($code, $message)
-	{
-		$this->errorMsg = $message;
-	}
+        restore_error_handler();
+        if (! $silent && $this->errorMsg !== null) {
+            if (ini_get('html_errors')) {
+                $this->errorMsg = html_entity_decode(strip_tags($this->errorMsg));
+            }
 
+            if (($a = strpos($this->errorMsg, ': ')) !== false) {
+                $this->errorMsg = substr($this->errorMsg, $a + 2);
+            }
 
-	/**
-	 * Reconnects to FTP server.
-	 * @return void
-	 */
-	public function reconnect()
-	{
-		@ftp_close($this->resource); // intentionally @
-		foreach ($this->state as $name => $args) {
-			call_user_func_array(array($this, $name), $args);
-		}
-	}
+            throw new FtpException($this->errorMsg);
+        }
 
+        return $res;
+    }
 
-	/**
-	 * Checks if file or directory exists.
-	 * @param  string
-	 * @return bool
-	 */
-	public function fileExists($file)
-	{
-		return (bool) $this->nlist($file);
-	}
+    /**
+     * Internal error handler. Do not call directly.
+     */
+    protected function errorHandler($code, $message)
+    {
+        $this->errorMsg = $message;
+    }
 
+    /**
+     * Reconnects to FTP server.
+     * @return void
+     */
+    public function reconnect()
+    {
+        @ftp_close($this->resource); // intentionally @
+        foreach ($this->state as $name => $args) {
+            call_user_func_array(array($this, $name), $args);
+        }
+    }
 
-	/**
-	 * Checks if directory exists.
-	 * @param  string
-	 * @return bool
-	 */
-	public function isDir($dir)
-	{
-		$current = $this->pwd();
-		try {
-			$this->chdir($dir);
-		} catch (FtpException $e) {
-		}
-		$this->chdir($current);
-		return empty($e);
-	}
+    /**
+     * Checks if file or directory exists.
+     * @param  string
+     * @return bool
+     */
+    public function fileExists($file)
+    {
+        return (bool) $this->nlist($file);
+    }
 
+    /**
+     * Checks if directory exists.
+     * @param  string
+     * @return bool
+     */
+    public function isDir($dir)
+    {
+        $current = $this->pwd();
+        try {
+            $this->chdir($dir);
+        } catch (FtpException $e) {
+            
+        }
+        $this->chdir($current);
+        return empty($e);
+    }
 
-	/**
-	 * Recursive creates directories.
-	 * @param  string
-	 * @return void
-	 */
-	public function mkDirRecursive($dir)
-	{
-		$parts = explode('/', $dir);
-		$path = '';
-		while (!empty($parts)) {
-			$path .= array_shift($parts);
-			try {
-				if ($path !== '') $this->mkdir($path);
-			} catch (FtpException $e) {
-				if (!$this->isDir($path)) {
-					throw new FtpException("Cannot create directory '$path'.");
-				}
-			}
-			$path .= '/';
-		}
-	}
+    /**
+     * Recursive creates directories.
+     * @param  string
+     * @return void
+     */
+    public function mkDirRecursive($dir)
+    {
+        $parts = explode('/', $dir);
+        $path  = '';
+        while (!empty($parts)) {
+            $path .= array_shift($parts);
+            try {
+                if ($path !== '') {
+                    $this->mkdir($path);
+                }
+            } catch (FtpException $e) {
+                if (!$this->isDir($path)) {
+                    throw new FtpException("Cannot create directory '$path'.");
+                }
+            }
+            $path .= '/';
+        }
+    }
 
-
-	/**
-	 * Recursive deletes path.
-	 * @param  string
-	 * @return void
-	 */
-	public function deleteRecursive($path)
-	{
-		if (!$this->tryDelete($path)) {
-			foreach ((array) $this->nlist($path) as $file) {
-				if ($file !== '.' && $file !== '..') {
-					$this->deleteRecursive(strpos($file, '/') === FALSE ? "$path/$file" : $file);
-				}
-			}
-			$this->rmdir($path);
-		}
-	}
+    /**
+     * Recursive deletes path.
+     * @param  string
+     * @return void
+     */
+    public function deleteRecursive($path)
+    {
+        if (!$this->tryDelete($path)) {
+            foreach ((array) $this->nlist($path) as $file) {
+                if ($file !== '.'
+                    && $file !== '..'
+                ) {
+                    $this->deleteRecursive(
+                        strpos($file, '/') === false ? "$path/$file" : $file
+                    );
+                }
+            }
+            $this->rmdir($path);
+        }
+    }
 
 }
-
-
 
 class FtpException extends Exception
 {
