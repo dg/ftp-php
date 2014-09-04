@@ -23,8 +23,8 @@ class Ftp
     const FAILED      = FTP_FAILED;
     const FINISHED    = FTP_FINISHED;
     const MOREDATA    = FTP_MOREDATA;
-    /** #@- */
 
+    /** #@- */
     private static $aliases = array(
         'sslconnect' => 'ssl_connect',
         'getoption'  => 'get_option',
@@ -46,10 +46,11 @@ class Ftp
     private $errorMsg;
 
     /**
-     * @param  string  URL ftp://...
-     * @param  bool
+     * @param string $url ftp://...
+     * @param int $timeout [optional] Set the timeout of connection in seconds.
+     * @param bool $passiveMode [Optional]
      */
-    public function __construct($url = null, $passiveMode = true)
+    public function __construct($url = null, $timeout = 90, $passiveMode = true)
     {
         if (! extension_loaded('ftp')) {
             throw new Exception('PHP extension FTP is not loaded.');
@@ -57,6 +58,11 @@ class Ftp
 
         if (! $url) {
             return;
+        }
+
+        // add default ftp wrapper if not specified
+        if (strpos($url, '://') === false) {
+            $url = 'ftp://' . $url;
         }
 
         $parts = parse_url($url);
@@ -68,11 +74,24 @@ class Ftp
             throw new InvalidArgumentException('Invalid URL.');
         }
 
-        $func = $parts['scheme'] === 'ftp' ? 'connect' : 'ssl_connect';
+        // connecting to server
+        $funcConnect = $parts['scheme'] === 'ftp'
+            ? 'connect'
+            : 'ssl_connect';
 
-        $this->$func($parts['host'], empty($parts['port']) ? null : (int) $parts['port']);
+        $this->$funcConnect(
+            $parts['host'],
+            empty($parts['port']) ? null : (int) $parts['port'],
+            $timeout
+        );
 
-        $this->login(urldecode($parts['user']), urldecode($parts['pass']));
+        // login
+        if (isset($parts['user'])) {
+            $this->login(
+                urldecode($parts['user']),
+                isset($parts['pass']) ? urldecode($parts['pass']) : ''
+            );
+        }
 
         $this->pasv((bool) $passiveMode);
 
@@ -107,7 +126,7 @@ class Ftp
             $this->state    = array($name => $args);
             $this->resource = call_user_func_array($func, $args);
             $res            = null;
-        } elseif (!is_resource($this->resource)) {
+        } elseif (! is_resource($this->resource)) {
             restore_error_handler();
             throw new FtpException("Not connected to FTP server. Call connect() or ssl_connect() first.");
         } else {

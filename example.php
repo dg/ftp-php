@@ -4,10 +4,8 @@ require_once 'src/Ftp.php';
 
 
 try {
-    $ftp = new Ftp;
-
-    // Opens an FTP connection to the specified host
-    $ftp->connect('ftp.ed.ac.uk');
+    // instance with host
+    $ftp = new Ftp('ftp.ed.ac.uk');
 
     // Login with username and password
     $ftp->login('anonymous', 'example@example.com');
