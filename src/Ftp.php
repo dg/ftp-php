@@ -250,6 +250,13 @@ class Ftp
         }
     }
 
+    public function __destruct()
+    {
+        if (is_resource($this->resource)) {
+            ftp_close($this->resource);
+        }
+    }
+    
 }
 
 class FtpException extends Exception
