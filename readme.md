@@ -54,6 +54,11 @@ When the connection is accidentally interrupted, you can re-establish it using m
 
 Changelog
 ---------
+v1.1.2 (9/2014)
+- Coding Style to PSR-2
+- Improving the class constructor
+- Add the class destructor method
+
 v1.1 (6/2014)
 - added support for passive mode
 
