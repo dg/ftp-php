@@ -188,7 +188,7 @@ class Ftp
 	 */
 	public function mkDirRecursive($dir)
 	{
-		$parts = explode('/', $dir);
+		$parts = explode(DIRECTORY_SEPARATOR, $dir);
 		$path = '';
 		while (!empty($parts)) {
 			$path .= array_shift($parts);
@@ -199,7 +199,7 @@ class Ftp
 					throw new FtpException("Cannot create directory '$path'.");
 				}
 			}
-			$path .= '/';
+			$path .= DIRECTORY_SEPARATOR;
 		}
 	}
 
@@ -214,7 +214,7 @@ class Ftp
 		if (!$this->tryDelete($path)) {
 			foreach ((array) $this->nlist($path) as $file) {
 				if ($file !== '.' && $file !== '..') {
-					$this->deleteRecursive(strpos($file, '/') === FALSE ? "$path/$file" : $file);
+					$this->deleteRecursive(strpos($file, DIRECTORY_SEPARATOR) === FALSE ? $path . DIRECTORY_SEPARATOR . $file : $file);
 				}
 			}
 			$this->rmdir($path);
