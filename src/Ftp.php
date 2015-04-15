@@ -9,39 +9,39 @@
  * @link       http://phpfashion.com/
  * @version    1.1
  * 
- * @method bool alloc ( resource $ftp_stream , int $filesize [, string &$result ] ) - Allocates space for a file to be uploaded
+ * @method bool alloc ( resource $ftp_stream , int $filesize , string &$result ) - Allocates space for a file to be uploaded
  * @method bool cdUp ( resource $ftp_stream ) - Changes to the parent directory
  * @method bool chDir ( resource $ftp_stream , string $directory ) - Changes the current directory on a FTP server
  * @method int chMod ( resource $ftp_stream , int $mode , string $filename ) - Set permissions on a file via FTP
  * @method bool close ( resource $ftp_stream ) - Closes an FTP connection
- * @method resource connect ( string $host [, int $port = 21 [, int $timeout = 90 ]] ) - Opens an FTP connection
+ * @method resource connect ( string $host , int $port = 21 , int $timeout = 90 ) - Opens an FTP connection
  * @method bool delete ( resource $ftp_stream , string $path ) - Deletes a file on the FTP server
  * @method bool exec ( resource $ftp_stream , string $command ) - Requests execution of a command on the FTP server
- * @method bool fGet ( resource $ftp_stream , resource $handle , string $remote_file , int $mode [, int $resumepos = 0 ] ) - Downloads a file from the FTP server and saves to an open file
- * @method bool fPut ( resource $ftp_stream , string $remote_file , resource $handle , int $mode [, int $startpos = 0 ] ) - Uploads from an open file to the FTP server
+ * @method bool fGet ( resource $ftp_stream , resource $handle , string $remote_file , int $mode , int $resumepos = 0 ) - Downloads a file from the FTP server and saves to an open file
+ * @method bool fPut ( resource $ftp_stream , string $remote_file , resource $handle , int $mode , int $startpos = 0 ) - Uploads from an open file to the FTP server
  * @method mixed getOption ( resource $ftp_stream , int $option ) - Retrieves various runtime behaviours of the current FTP stream
- * @method bool get ( resource $ftp_stream , string $local_file , string $remote_file , int $mode [, int $resumepos = 0 ] ) - Downloads a file from the FTP server
+ * @method bool get ( resource $ftp_stream , string $local_file , string $remote_file , int $mode , int $resumepos = 0 ) - Downloads a file from the FTP server
  * @method bool login ( resource $ftp_stream , string $username , string $password ) - Logs in to an FTP connection
  * @method int mdTm ( resource $ftp_stream , string $remote_file ) - Returns the last modified time of the given file
  * @method string mkDir ( resource $ftp_stream , string $directory ) - Creates a directory
  * @method int nbContinue ( resource $ftp_stream ) - Continues retrieving/sending a file (non-blocking)
- * @method int nbFGet ( resource $ftp_stream , resource $handle , string $remote_file , int $mode [, int $resumepos = 0 ] ) - Retrieves a file from the FTP server and writes it to an open file (non-blocking)
- * @method int nbFPut ( resource $ftp_stream , string $remote_file , resource $handle , int $mode [, int $startpos = 0 ] ) - Stores a file from an open file to the FTP server (non-blocking)
- * @method int nbGet ( resource $ftp_stream , string $local_file , string $remote_file , int $mode [, int $resumepos = 0 ] ) - Retrieves a file from the FTP server and writes it to a local file(non-blocking)
- * @method int nbPut ( resource $ftp_stream , string $remote_file , string $local_file , int $mode [, int $startpos = 0 ] ) - Stores a file on the FTP server (non-blocking)
+ * @method int nbFGet ( resource $ftp_stream , resource $handle , string $remote_file , int $mode , int $resumepos = 0 ) - Retrieves a file from the FTP server and writes it to an open file (non-blocking)
+ * @method int nbFPut ( resource $ftp_stream , string $remote_file , resource $handle , int $mode , int $startpos = 0 ) - Stores a file from an open file to the FTP server (non-blocking)
+ * @method int nbGet ( resource $ftp_stream , string $local_file , string $remote_file , int $mode , int $resumepos = 0 ) - Retrieves a file from the FTP server and writes it to a local file (non-blocking)
+ * @method int nbPut ( resource $ftp_stream , string $remote_file , string $local_file , int $mode , int $startpos = 0 ) - Stores a file on the FTP server (non-blocking)
  * @method array nList ( resource $ftp_stream , string $directory ) - Returns a list of files in the given directory
  * @method bool pasv ( resource $ftp_stream , bool $pasv ) - Turns passive mode on or off
- * @method bool put ( resource $ftp_stream , string $remote_file , string $local_file , int $mode [, int $startpos = 0 ] ) - Uploads a file to the FTP server
+ * @method bool put ( resource $ftp_stream , string $remote_file , string $local_file , int $mode , int $startpos = 0 ) - Uploads a file to the FTP server
  * @method string pwd ( resource $ftp_stream ) - Returns the current directory name
  * @method bool quit ( resource $ftp_stream ) - Closes an FTP connection (alias of close)
  * @method array raw ( resource $ftp_stream , string $command ) - Sends an arbitrary command to an FTP server
- * @method mixed rawList ( resource $ftp_stream , string $directory [, bool $recursive = false ] ) - Returns a detailed list of files in the given directory
+ * @method mixed rawList ( resource $ftp_stream , string $directory , bool $recursive = false ) - Returns a detailed list of files in the given directory
  * @method bool rename ( resource $ftp_stream , string $oldname , string $newname ) - Renames a file or a directory on the FTP server
  * @method bool rmDir ( resource $ftp_stream , string $directory ) - Removes a directory
  * @method bool setOption ( resource $ftp_stream , int $option , mixed $value ) - Set miscellaneous runtime FTP options
  * @method bool site ( resource $ftp_stream , string $command ) - Sends a SITE command to the server
  * @method int size ( resource $ftp_stream , string $remote_file ) - Returns the size of the given file
- * @method resource sslConnect ( string $host [, int $port = 21 [, int $timeout = 90 ]] ) - Opens an Secure SSL-FTP connection
+ * @method resource sslConnect ( string $host , int $port = 21 , int $timeout = 90 ) - Opens an Secure SSL-FTP connection
  * @method string sysType ( resource $ftp_stream ) - Returns the system type identifier of the remote FTP server
  */
 class Ftp
