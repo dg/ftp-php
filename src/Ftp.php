@@ -7,7 +7,7 @@
  * @copyright  Copyright (c) 2008 David Grudl
  * @license    New BSD License
  * @link       http://phpfashion.com/
- * @version    1.1
+ * @version    1.2
  *
  * @method void alloc(int $filesize, string & $result) - Allocates space for a file to be uploaded
  * @method void cdUp() - Changes to the parent directory
