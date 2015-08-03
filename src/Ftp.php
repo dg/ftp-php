@@ -31,7 +31,7 @@
  * @method int nbPut(string $remote_file, string $local_file, int $mode, int $startpos = 0) - Stores a file on the FTP server(non-blocking)
  * @method array nList(string $directory) - Returns a list of files in the given directory
  * @method void pasv(bool $pasv) - Turns passive mode on or off
- * @method void put(string $remote_file, string $local_file, int $mode, int $startpos = 0) - Uploads a file to the FTP server
+ * @method bool put(string $remote_file, string $local_file, int $mode, int $startpos = 0) - Uploads a file to the FTP server
  * @method string pwd() - Returns the current directory name
  * @method void quit() - Closes an FTP connection(alias of close)
  * @method array raw(string $command) - Sends an arbitrary command to an FTP server
