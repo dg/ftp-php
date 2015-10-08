@@ -255,6 +255,20 @@ class Ftp
 			$this->rmdir($path);
 		}
 	}
+	
+	public function tryDeleteRecursive($path) {
+		try {
+			$this->deleteRecursive($path);
+		} catch (FtpException $e) {
+		}
+	}
+	
+	public function tryMkDirRecursive($path) {
+		try {
+			$this->mkDirRecursive($path);
+		} catch (FtpException $e) {
+		}
+	}
 
 }
 
