@@ -23,6 +23,7 @@ Opens an FTP connection to the specified host:
 
 ```php
 $ftp = new Ftp;
+$host = 'ftp.example.com';
 $ftp->connect($host);
 ```
 
