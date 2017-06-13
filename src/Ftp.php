@@ -21,7 +21,7 @@
  * @method void fPut(string $remote_file, resource $handle, int $mode, int $startpos = 0) - Uploads from an open file to the FTP server
  * @method mixed getOption(int $option) - Retrieves various runtime behaviours of the current FTP stream
  * @method void get(string $local_file, string $remote_file, int $mode, int $resumepos = 0) - Downloads a file from the FTP server
- * @method void login(string $username, string $password) - Logs in to an FTP connection
+ * @method bool login(string $username, string $password) - Logs in to an FTP connection
  * @method int mdTm(string $remote_file) - Returns the last modified time of the given file
  * @method string mkDir(string $directory) - Creates a directory
  * @method int nbContinue() - Continues retrieving/sending a file(non-blocking)
@@ -31,7 +31,7 @@
  * @method int nbPut(string $remote_file, string $local_file, int $mode, int $startpos = 0) - Stores a file on the FTP server(non-blocking)
  * @method array nList(string $directory) - Returns a list of files in the given directory
  * @method void pasv(bool $pasv) - Turns passive mode on or off
- * @method void put(string $remote_file, string $local_file, int $mode, int $startpos = 0) - Uploads a file to the FTP server
+ * @method bool put(string $remote_file, string $local_file, int $mode, int $startpos = 0) - Uploads a file to the FTP server
  * @method string pwd() - Returns the current directory name
  * @method void quit() - Closes an FTP connection(alias of close)
  * @method array raw(string $command) - Sends an arbitrary command to an FTP server
