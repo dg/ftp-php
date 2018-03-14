@@ -17,8 +17,8 @@
  * @method void connect(string $host, int $port = 21, int $timeout = 90) - Opens an FTP connection
  * @method void delete(string $path) - Deletes a file on the FTP server
  * @method bool exec(string $command) - Requests execution of a command on the FTP server
- * @method void fGet(resource $handle, string $remote_file, int $mode, int $resumepos = 0) - Downloads a file from the FTP server and saves to an open file
- * @method void fPut(string $remote_file, resource $handle, int $mode, int $startpos = 0) - Uploads from an open file to the FTP server
+ * @method bool fGet(resource $handle, string $remote_file, int $mode, int $resumepos = 0) - Downloads a file from the FTP server and saves to an open file
+ * @method bool fPut(string $remote_file, resource $handle, int $mode, int $startpos = 0) - Uploads from an open file to the FTP server
  * @method mixed getOption(int $option) - Retrieves various runtime behaviours of the current FTP stream
  * @method void get(string $local_file, string $remote_file, int $mode, int $resumepos = 0) - Downloads a file from the FTP server
  * @method void login(string $username, string $password) - Logs in to an FTP connection
