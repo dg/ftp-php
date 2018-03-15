@@ -9,40 +9,42 @@
  * @link       http://phpfashion.com/
  * @version    1.2
  *
- * @method void alloc(int $filesize, string & $result) - Allocates space for a file to be uploaded
- * @method void cdUp() - Changes to the parent directory
- * @method void chDir(string $directory) - Changes the current directory on a FTP server
- * @method int chMod(int $mode, string $filename) - Set permissions on a file via FTP
- * @method void close() - Closes an FTP connection
+ * @method bool alloc(int $filesize, string & $result) - Allocates space for a file to be uploaded
+ * @method bool append(string $remote_file, string $local_file, int $mode = 2) - Append content of a file a another file on the FTP server
+ * @method bool cdUp() - Changes to the parent directory
+ * @method bool chDir(string $directory) - Changes the current directory on a FTP server
+ * @method int|false chMod(int $mode, string $filename) - Set permissions on a file via FTP
+ * @method bool close() - Closes an FTP connection
  * @method void connect(string $host, int $port = 21, int $timeout = 90) - Opens an FTP connection
- * @method void delete(string $path) - Deletes a file on the FTP server
+ * @method bool delete(string $path) - Deletes a file on the FTP server
  * @method bool exec(string $command) - Requests execution of a command on the FTP server
  * @method bool fGet(resource $handle, string $remote_file, int $mode, int $resumepos = 0) - Downloads a file from the FTP server and saves to an open file
  * @method bool fPut(string $remote_file, resource $handle, int $mode, int $startpos = 0) - Uploads from an open file to the FTP server
  * @method mixed getOption(int $option) - Retrieves various runtime behaviours of the current FTP stream
- * @method void get(string $local_file, string $remote_file, int $mode, int $resumepos = 0) - Downloads a file from the FTP server
- * @method void login(string $username, string $password) - Logs in to an FTP connection
+ * @method bool get(string $local_file, string $remote_file, int $mode, int $resumepos = 0) - Downloads a file from the FTP server
+ * @method bool login(string $username, string $password) - Logs in to an FTP connection
  * @method int mdTm(string $remote_file) - Returns the last modified time of the given file
- * @method string mkDir(string $directory) - Creates a directory
+ * @method string|false mkDir(string $directory) - Creates a directory
+ * @method array|false mlsd(string $directory) - Returns a list of files in the given directory
  * @method int nbContinue() - Continues retrieving/sending a file(non-blocking)
  * @method int nbFGet(resource $handle, string $remote_file, int $mode, int $resumepos = 0) - Retrieves a file from the FTP server and writes it to an open file(non-blocking)
  * @method int nbFPut(string $remote_file, resource $handle, int $mode, int $startpos = 0) - Stores a file from an open file to the FTP server(non-blocking)
  * @method int nbGet(string $local_file, string $remote_file, int $mode, int $resumepos = 0) - Retrieves a file from the FTP server and writes it to a local file(non-blocking)
  * @method int nbPut(string $remote_file, string $local_file, int $mode, int $startpos = 0) - Stores a file on the FTP server(non-blocking)
- * @method array nList(string $directory) - Returns a list of files in the given directory
- * @method void pasv(bool $pasv) - Turns passive mode on or off
- * @method void put(string $remote_file, string $local_file, int $mode, int $startpos = 0) - Uploads a file to the FTP server
- * @method string pwd() - Returns the current directory name
+ * @method array|false nList(string $directory) - Returns a list of files in the given directory
+ * @method bool pasv(bool $pasv) - Turns passive mode on or off
+ * @method bool put(string $remote_file, string $local_file, int $mode, int $startpos = 0) - Uploads a file to the FTP server
+ * @method string|false pwd() - Returns the current directory name
  * @method void quit() - Closes an FTP connection(alias of close)
  * @method array raw(string $command) - Sends an arbitrary command to an FTP server
- * @method mixed rawList(string $directory, bool $recursive = false) - Returns a detailed list of files in the given directory
- * @method void rename(string $oldname, string $newname) - Renames a file or a directory on the FTP server
- * @method void rmDir(string $directory) - Removes a directory
+ * @method array|false rawList(string $directory, bool $recursive = false) - Returns a detailed list of files in the given directory
+ * @method bool rename(string $oldname, string $newname) - Renames a file or a directory on the FTP server
+ * @method bool rmDir(string $directory) - Removes a directory
  * @method bool setOption(int $option, mixed $value) - Set miscellaneous runtime FTP options
- * @method void site(string $command) - Sends a SITE command to the server
+ * @method bool site(string $command) - Sends a SITE command to the server
  * @method int size(string $remote_file) - Returns the size of the given file
  * @method void sslConnect(string $host, int $port = 21, int $timeout = 90) - Opens an Secure SSL-FTP connection
- * @method string sysType() - Returns the system type identifier of the remote FTP server
+ * @method string|false sysType() - Returns the system type identifier of the remote FTP server
  */
 class Ftp
 {
