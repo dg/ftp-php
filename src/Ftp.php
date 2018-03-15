@@ -12,7 +12,7 @@
  * @method bool alloc(int $filesize, string & $result) - Allocates space for a file to be uploaded
  * @method bool append(string $remote_file, string $local_file, int $mode = 2) - Append content of a file a another file on the FTP server
  * @method bool cdUp() - Changes to the parent directory
- * @method bool chDir(string $directory) - Changes the current directory on a FTP server
+ * @method void chDir(string $directory) - Changes the current directory on a FTP server
  * @method int|false chMod(int $mode, string $filename) - Set permissions on a file via FTP
  * @method bool close() - Closes an FTP connection
  * @method void connect(string $host, int $port = 21, int $timeout = 90) - Opens an FTP connection
@@ -22,7 +22,7 @@
  * @method bool fPut(string $remote_file, resource $handle, int $mode, int $startpos = 0) - Uploads from an open file to the FTP server
  * @method mixed getOption(int $option) - Retrieves various runtime behaviours of the current FTP stream
  * @method bool get(string $local_file, string $remote_file, int $mode, int $resumepos = 0) - Downloads a file from the FTP server
- * @method bool login(string $username, string $password) - Logs in to an FTP connection
+ * @method void login(string $username, string $password) - Logs in to an FTP connection
  * @method int mdTm(string $remote_file) - Returns the last modified time of the given file
  * @method string|false mkDir(string $directory) - Creates a directory
  * @method array|false mlsd(string $directory) - Returns a list of files in the given directory
@@ -38,9 +38,9 @@
  * @method void quit() - Closes an FTP connection(alias of close)
  * @method array raw(string $command) - Sends an arbitrary command to an FTP server
  * @method array|false rawList(string $directory, bool $recursive = false) - Returns a detailed list of files in the given directory
- * @method bool rename(string $oldname, string $newname) - Renames a file or a directory on the FTP server
+ * @method void rename(string $oldname, string $newname) - Renames a file or a directory on the FTP server
  * @method bool rmDir(string $directory) - Removes a directory
- * @method bool setOption(int $option, mixed $value) - Set miscellaneous runtime FTP options
+ * @method void setOption(int $option, mixed $value) - Set miscellaneous runtime FTP options
  * @method bool site(string $command) - Sends a SITE command to the server
  * @method int size(string $remote_file) - Returns the size of the given file
  * @method void sslConnect(string $host, int $port = 21, int $timeout = 90) - Opens an Secure SSL-FTP connection
