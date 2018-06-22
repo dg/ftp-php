@@ -15,6 +15,8 @@ or install it via Composer:
 php composer.phar require dg/ftp-php
 ```
 
+If you like it, **[please make a donation now](https://nette.org/make-donation?to=ftp-php)**. Thank you!
+
 
 Usage
 -----
