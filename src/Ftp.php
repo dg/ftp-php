@@ -70,7 +70,7 @@ class Ftp
 		'nbput' => 'nb_put',
 	);
 
-	/** @var resource */
+	/** @var resource|\FTP\Connection */
 	private $resource;
 
 	/** @var array */
@@ -132,7 +132,7 @@ class Ftp
 			$this->resource = call_user_func_array($func, $args);
 			$res = NULL;
 
-		} elseif (!is_resource($this->resource)) {
+		} elseif (!is_resource($this->resource) && !$this->resource instanceof \FTP\Connection) {
 			restore_error_handler();
 			throw new FtpException("Not connected to FTP server. Call connect() or ssl_connect() first.");
 
