@@ -95,7 +95,7 @@ class Ftp
 				throw new InvalidArgumentException('Invalid URL.');
 			}
 			$func = $parts['scheme'] === 'ftp' ? 'connect' : 'ssl_connect';
-			$this->$func($parts['host'], empty($parts['port']) ? NULL : (int) $parts['port']);
+			$this->$func($parts['host'], empty($parts['port']) ? 0 : (int) $parts['port']);
 			$this->login(urldecode($parts['user']), urldecode($parts['pass']));
 			$this->pasv((bool) $passiveMode);
 			if (isset($parts['path'])) {
