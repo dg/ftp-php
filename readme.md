@@ -38,7 +38,7 @@ $ftp->login($username, $password);
 Upload the file
 
 ```php
-$ftp->put($destination_file, $source_file, FTP_BINARY);
+$ftp->put($destination_file, $source_file, Ftp::Binary);
 ```
 
 Close the FTP stream
@@ -55,7 +55,7 @@ try {
 	$ftp = new Ftp;
 	$ftp->connect($host);
 	$ftp->login($username, $password);
-	$ftp->put($destination_file, $source_file, FTP_BINARY);
+	$ftp->put($destination_file, $source_file, Ftp::Binary);
 
 } catch (FtpException $e) {
 	echo 'Error: ', $e->getMessage();

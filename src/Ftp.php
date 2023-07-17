@@ -43,19 +43,22 @@ declare(strict_types=1);
  */
 class Ftp
 {
-	/**#@+ FTP constant alias */
 	public const ASCII = FTP_ASCII;
-	public const TEXT = FTP_TEXT;
-	public const BINARY = FTP_BINARY;
-	public const IMAGE = FTP_IMAGE;
-	public const TIMEOUT_SEC = FTP_TIMEOUT_SEC;
-	public const AUTOSEEK = FTP_AUTOSEEK;
-	public const AUTORESUME = FTP_AUTORESUME;
-	public const FAILED = FTP_FAILED;
-	public const FINISHED = FTP_FINISHED;
-	public const MOREDATA = FTP_MOREDATA;
+	public const Text = FTP_TEXT;
+	public const Binary = FTP_BINARY;
+	public const Image = FTP_IMAGE;
+	public const Timeout = FTP_TIMEOUT_SEC;
+	public const AutoSeek = FTP_AUTOSEEK;
+	public const AutoResume = FTP_AUTORESUME;
+	public const Failed = FTP_FAILED;
+	public const Finished = FTP_FINISHED;
+	public const MoreData = FTP_MOREDATA;
 
-	/**#@-*/
+	/** @deprecated */
+	public const BINARY = self::Binary;
+
+	/** @deprecated */
+	public const TEXT = self::Text;
 
 	private const Aliases = [
 		'sslconnect' => 'ssl_connect',
