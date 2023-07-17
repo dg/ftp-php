@@ -68,18 +68,11 @@ class Ftp
 		'nbput' => 'nb_put',
 	];
 
-	/** @var FTP\Connection */
-	private $resource;
-
-	/** @var array */
-	private $state;
+	private FTP\Connection $resource;
+	private array $state = [];
 
 
-	/**
-	 * @param  string  URL ftp://...
-	 * @param  bool
-	 */
-	public function __construct($url = null, $passiveMode = true)
+	public function __construct(?string $url = null, bool $passiveMode = true)
 	{
 		if (!extension_loaded('ftp')) {
 			throw new Exception('PHP extension FTP is not loaded.');
@@ -104,13 +97,10 @@ class Ftp
 
 	/**
 	 * Magic method (do not call directly).
-	 * @param  string  method name
-	 * @param  array   arguments
-	 * @return mixed
 	 * @throws Exception
 	 * @throws FtpException
 	 */
-	public function __call($name, $args)
+	public function __call(string $name, array $args): mixed
 	{
 		$name = strtolower($name);
 		$silent = strncmp($name, 'try', 3) === 0;
@@ -167,9 +157,8 @@ class Ftp
 
 	/**
 	 * Reconnects to FTP server.
-	 * @return void
 	 */
-	public function reconnect()
+	public function reconnect(): void
 	{
 		@ftp_close($this->resource); // intentionally @
 		foreach ($this->state as $name => $args) {
@@ -180,10 +169,8 @@ class Ftp
 
 	/**
 	 * Checks if file or directory exists.
-	 * @param  string
-	 * @return bool
 	 */
-	public function fileExists($file)
+	public function fileExists(string $file): bool
 	{
 		return (bool) $this->nlist($file);
 	}
@@ -191,10 +178,8 @@ class Ftp
 
 	/**
 	 * Checks if directory exists.
-	 * @param  string
-	 * @return bool
 	 */
-	public function isDir($dir)
+	public function isDir(string $dir): bool
 	{
 		$current = $this->pwd();
 		try {
@@ -208,10 +193,8 @@ class Ftp
 
 	/**
 	 * Recursive creates directories.
-	 * @param  string
-	 * @return void
 	 */
-	public function mkDirRecursive($dir)
+	public function mkDirRecursive(string $dir): void
 	{
 		$parts = explode('/', $dir);
 		$path = '';
@@ -233,10 +216,8 @@ class Ftp
 
 	/**
 	 * Recursive deletes path.
-	 * @param  string
-	 * @return void
 	 */
-	public function deleteRecursive($path)
+	public function deleteRecursive(string $path): void
 	{
 		if (!$this->tryDelete($path)) {
 			foreach ((array) $this->nlist($path) as $file) {
