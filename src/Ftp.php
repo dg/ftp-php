@@ -59,7 +59,7 @@ class Ftp
 	const MOREDATA = FTP_MOREDATA;
 	/**#@-*/
 
-	private static $aliases = array(
+	private const Aliases = [
 		'sslconnect' => 'ssl_connect',
 		'getoption' => 'get_option',
 		'setoption' => 'set_option',
@@ -68,16 +68,13 @@ class Ftp
 		'nbfput' => 'nb_fput',
 		'nbget' => 'nb_get',
 		'nbput' => 'nb_put',
-	);
+	];
 
-	/** @var resource|\FTP\Connection */
+	/** @var FTP\Connection */
 	private $resource;
 
 	/** @var array */
 	private $state;
-
-	/** @var string */
-	private $errorMsg;
 
 
 	/**
@@ -120,21 +117,23 @@ class Ftp
 		$name = strtolower($name);
 		$silent = strncmp($name, 'try', 3) === 0;
 		$func = $silent ? substr($name, 3) : $name;
-		$func = 'ftp_' . (isset(self::$aliases[$func]) ? self::$aliases[$func] : $func);
+		$func = 'ftp_' . (self::Aliases[$func] ?? $func);
 
 		if (!function_exists($func)) {
 			throw new Exception("Call to undefined method Ftp::$name().");
 		}
 
-		$this->errorMsg = NULL;
-		set_error_handler(array($this, '_errorHandler'));
+		$errorMsg = null;
+		set_error_handler(function (int $code, string $message) use (&$errorMsg) {
+			$errorMsg = $message;
+		});
 
 		if ($func === 'ftp_connect' || $func === 'ftp_ssl_connect') {
 			$this->state = array($name => $args);
-			$this->resource = call_user_func_array($func, $args);
+			$this->resource = $func(...$args);
 			$res = NULL;
 
-		} elseif (!is_resource($this->resource) && !$this->resource instanceof \FTP\Connection) {
+		} elseif (!$this->resource instanceof FTP\Connection) {
 			restore_error_handler();
 			throw new FtpException("Not connected to FTP server. Call connect() or ssl_connect() first.");
 
@@ -144,7 +143,7 @@ class Ftp
 			}
 
 			array_unshift($args, $this->resource);
-			$res = call_user_func_array($func, $args);
+			$res = $func(...$args);
 
 			if ($func === 'ftp_chdir' || $func === 'ftp_cdup') {
 				$this->state['chdir'] = array(ftp_pwd($this->resource));
@@ -152,28 +151,19 @@ class Ftp
 		}
 
 		restore_error_handler();
-		if (!$silent && $this->errorMsg !== NULL) {
+		if (!$silent && $errorMsg !== null) {
 			if (ini_get('html_errors')) {
-				$this->errorMsg = html_entity_decode(strip_tags($this->errorMsg));
+				$errorMsg = html_entity_decode(strip_tags($errorMsg));
 			}
 
-			if (($a = strpos($this->errorMsg, ': ')) !== FALSE) {
-				$this->errorMsg = substr($this->errorMsg, $a + 2);
+			if (($a = strpos($errorMsg, ': ')) !== false) {
+				$errorMsg = substr($errorMsg, $a + 2);
 			}
 
-			throw new FtpException($this->errorMsg);
+			throw new FtpException($errorMsg);
 		}
 
 		return $res;
-	}
-
-
-	/**
-	 * Internal error handler. Do not call directly.
-	 */
-	public function _errorHandler($code, $message)
-	{
-		$this->errorMsg = $message;
 	}
 
 
@@ -185,7 +175,7 @@ class Ftp
 	{
 		@ftp_close($this->resource); // intentionally @
 		foreach ($this->state as $name => $args) {
-			call_user_func_array(array($this, $name), $args);
+			[$this, $name](...$args);
 		}
 	}
 
@@ -251,7 +241,7 @@ class Ftp
 		if (!$this->tryDelete($path)) {
 			foreach ((array) $this->nlist($path) as $file) {
 				if ($file !== '.' && $file !== '..') {
-					$this->deleteRecursive(strpos($file, '/') === FALSE ? "$path/$file" : $file);
+					$this->deleteRecursive(!str_contains($file, '/') ? "$path/$file" : $file);
 				}
 			}
 			$this->rmdir($path);
