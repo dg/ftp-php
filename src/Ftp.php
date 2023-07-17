@@ -1,14 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * FTP - access to an FTP server.
  *
- * @author     David Grudl
- * @copyright  Copyright (c) 2008 David Grudl
- * @license    New BSD License
  * @link       http://phpfashion.com/
- * @version    1.2
- *
  * @method void alloc(int $filesize, string & $result) - Allocates space for a file to be uploaded
  * @method void cdUp() - Changes to the parent directory
  * @method void chDir(string $directory) - Changes the current directory on a FTP server
@@ -47,16 +44,17 @@
 class Ftp
 {
 	/**#@+ FTP constant alias */
-	const ASCII = FTP_ASCII;
-	const TEXT = FTP_TEXT;
-	const BINARY = FTP_BINARY;
-	const IMAGE = FTP_IMAGE;
-	const TIMEOUT_SEC = FTP_TIMEOUT_SEC;
-	const AUTOSEEK = FTP_AUTOSEEK;
-	const AUTORESUME = FTP_AUTORESUME;
-	const FAILED = FTP_FAILED;
-	const FINISHED = FTP_FINISHED;
-	const MOREDATA = FTP_MOREDATA;
+	public const ASCII = FTP_ASCII;
+	public const TEXT = FTP_TEXT;
+	public const BINARY = FTP_BINARY;
+	public const IMAGE = FTP_IMAGE;
+	public const TIMEOUT_SEC = FTP_TIMEOUT_SEC;
+	public const AUTOSEEK = FTP_AUTOSEEK;
+	public const AUTORESUME = FTP_AUTORESUME;
+	public const FAILED = FTP_FAILED;
+	public const FINISHED = FTP_FINISHED;
+	public const MOREDATA = FTP_MOREDATA;
+
 	/**#@-*/
 
 	private const Aliases = [
@@ -81,14 +79,14 @@ class Ftp
 	 * @param  string  URL ftp://...
 	 * @param  bool
 	 */
-	public function __construct($url = NULL, $passiveMode = TRUE)
+	public function __construct($url = null, $passiveMode = true)
 	{
 		if (!extension_loaded('ftp')) {
 			throw new Exception('PHP extension FTP is not loaded.');
 		}
 		if ($url) {
 			$parts = parse_url($url);
-			if (!isset($parts['scheme']) || !in_array($parts['scheme'], array('ftp', 'ftps', 'sftp'))) {
+			if (!isset($parts['scheme']) || !in_array($parts['scheme'], ['ftp', 'ftps', 'sftp'], true)) {
 				throw new InvalidArgumentException('Invalid URL.');
 			}
 			$func = $parts['scheme'] === 'ftp' ? 'connect' : 'ssl_connect';
@@ -129,13 +127,13 @@ class Ftp
 		});
 
 		if ($func === 'ftp_connect' || $func === 'ftp_ssl_connect') {
-			$this->state = array($name => $args);
+			$this->state = [$name => $args];
 			$this->resource = $func(...$args);
-			$res = NULL;
+			$res = null;
 
 		} elseif (!$this->resource instanceof FTP\Connection) {
 			restore_error_handler();
-			throw new FtpException("Not connected to FTP server. Call connect() or ssl_connect() first.");
+			throw new FtpException('Not connected to FTP server. Call connect() or ssl_connect() first.');
 
 		} else {
 			if ($func === 'ftp_login' || $func === 'ftp_pasv') {
@@ -146,7 +144,7 @@ class Ftp
 			$res = $func(...$args);
 
 			if ($func === 'ftp_chdir' || $func === 'ftp_cdup') {
-				$this->state['chdir'] = array(ftp_pwd($this->resource));
+				$this->state['chdir'] = [ftp_pwd($this->resource)];
 			}
 		}
 
@@ -220,7 +218,9 @@ class Ftp
 		while (!empty($parts)) {
 			$path .= array_shift($parts);
 			try {
-				if ($path !== '') $this->mkdir($path);
+				if ($path !== '') {
+					$this->mkdir($path);
+				}
 			} catch (FtpException $e) {
 				if (!$this->isDir($path)) {
 					throw new FtpException("Cannot create directory '$path'.");
@@ -247,7 +247,6 @@ class Ftp
 			$this->rmdir($path);
 		}
 	}
-
 }
 
 
