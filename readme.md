@@ -38,7 +38,7 @@ $ftp->login($username, $password);
 Upload the file
 
 ```php
-$ftp->put($destination_file, $source_file, Ftp::Binary);
+$ftp->put($destinationFile, $sourceFile, Ftp::Binary);
 ```
 
 Close the FTP stream
@@ -55,20 +55,20 @@ try {
 	$ftp = new Ftp;
 	$ftp->connect($host);
 	$ftp->login($username, $password);
-	$ftp->put($destination_file, $source_file, Ftp::Binary);
+	$ftp->put($destinationFile, $sourceFile, Ftp::Binary);
 
 } catch (FtpException $e) {
 	echo 'Error: ', $e->getMessage();
 }
 ```
 
-On the other hand, if you'd like the possible exception quietly catch, call methods with the prefix 'try':
+On the other hand, if you'd like the possible exception quietly catch, call methods with the prefix `try`:
 
 ```php
-$ftp->tryDelete($destination_file);
+$ftp->tryDelete($destinationFile);
 ```
 
-When the connection is accidentally interrupted, you can re-establish it using method $ftp->reconnect().
+When the connection is accidentally interrupted, you can re-establish it using method `$ftp->reconnect()`.
 
 
 -----
