@@ -7,7 +7,7 @@ FTP for PHP
 
 FTP for PHP is a very small and easy-to-use library for accessing FTP servers.
 
-It requires PHP 5.0 or newer and is licensed under the New BSD License.
+It requires PHP 8.1 or newer and is licensed under the New BSD License.
 You can obtain the latest version from our [GitHub repository](https://github.com/dg/ftp-php/releases)
 or install it via Composer:
 
@@ -72,4 +72,4 @@ When the connection is accidentally interrupted, you can re-establish it using m
 
 
 -----
-(c) David Grudl, 2008, 2014 (http://davidgrudl.com)
+(c) David Grudl, 2008, 2023 (http://davidgrudl.com)
