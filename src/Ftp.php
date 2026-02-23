@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 /**
  * FTP - access to an FTP server.
@@ -106,7 +104,7 @@ class Ftp
 	public function __call(string $name, array $args): mixed
 	{
 		$name = strtolower($name);
-		$silent = strncmp($name, 'try', 3) === 0;
+		$silent = str_starts_with($name, 'try');
 		$func = $silent ? substr($name, 3) : $name;
 		$func = 'ftp_' . (self::Aliases[$func] ?? $func);
 
@@ -207,7 +205,7 @@ class Ftp
 				if ($path !== '') {
 					$this->mkdir($path);
 				}
-			} catch (FtpException $e) {
+			} catch (FtpException) {
 				if (!$this->isDir($path)) {
 					throw new FtpException("Cannot create directory '$path'.");
 				}
@@ -232,7 +230,6 @@ class Ftp
 		}
 	}
 }
-
 
 
 class FtpException extends Exception
